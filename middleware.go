@@ -3,6 +3,7 @@ package middleware
 import (
 	"context"
 	"crypto/rand"
+	"fmt"
 	"log"
 	"math/big"
 	"net/http"
@@ -35,7 +36,7 @@ func LoggingMiddleware(next http.Handler) http.Handler {
 		start := time.Now()
 		rec := statusRecorder{ResponseWriter: w}
 		next.ServeHTTP(&rec, r)
-		log.Printf("IPv6: %s, request_id: %s, status: %d, duration: %s",
+		log.Printf("IPv6: %s, request_id_new: %s, status: %d, duration: %s",
 			r.RemoteAddr,
 			r.Context().Value("request_id"),
 			rec.status,
@@ -50,6 +51,7 @@ func RequstIDMiddleware(next http.Handler) http.Handler {
 		if requestID == "" {
 			requestID = ReuestIDGenerator()
 		}
+		fmt.Println("Request id BEFORE", r.Context().Value("request_id"))
 		if r.Context().Value("request_id") == nil {
 			ctx = context.WithValue(r.Context(), "request_id", requestID)
 		}
