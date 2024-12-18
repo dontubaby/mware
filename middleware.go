@@ -22,7 +22,7 @@ func (rec *statusRecorder) WriteHeader(code int) {
 
 const digitCount = 12
 
-func ReuestIDGenerator() string {
+func RequestIDGenerator() string {
 	var result []byte
 	for i := 0; i < digitCount; i++ {
 		num, _ := rand.Int(rand.Reader, big.NewInt(10))
@@ -44,12 +44,12 @@ func LoggingMiddleware(next http.Handler) http.Handler {
 	})
 }
 
-func RequstIDMiddleware(next http.Handler) http.Handler {
+func RequestIDMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		var ctx context.Context
 		requestID := r.URL.Query().Get("request_id")
 		if requestID == "" {
-			requestID = ReuestIDGenerator()
+			requestID = RequestIDGenerator()
 		}
 		fmt.Println("Request id BEFORE", r.Context().Value("request_id"))
 		if r.Context().Value("request_id") == nil {
