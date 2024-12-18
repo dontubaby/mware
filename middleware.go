@@ -45,11 +45,14 @@ func LoggingMiddleware(next http.Handler) http.Handler {
 
 func RequstIDMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		var ctx context.Context
 		requestID := r.URL.Query().Get("request_id")
 		if requestID == "" {
 			requestID = ReuestIDGenerator()
 		}
-		ctx := context.WithValue(r.Context(), "request_id", requestID)
+		if r.Context().Value("request_id") == nil {
+			ctx = context.WithValue(r.Context(), "request_id", requestID)
+		}
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
